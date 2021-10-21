@@ -6,7 +6,7 @@ source /vagrant/utils/helpers.sh
 
 check_requirements curl tar
 
-ARCHIVE="consul_exporter-${CONSUL_EXPORTER_VERSION}.linux-amd64.tar.gz"
+ARCHIVE="consul_exporter-${CONSUL_EXPORTER_VERSION}.linux-${ARCH}.tar.gz"
 
 if ! check_cache "${ARCHIVE}"; then
   get_archive "https://github.com/prometheus/consul_exporter/releases/download/v${CONSUL_EXPORTER_VERSION}/${ARCHIVE}"

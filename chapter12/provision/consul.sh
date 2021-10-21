@@ -6,7 +6,7 @@ source /vagrant/utils/helpers.sh
 
 check_requirements curl tar
 
-ARCHIVE="consul_${CONSUL_VERSION}_linux_amd64.zip"
+ARCHIVE="consul_${CONSUL_VERSION}_linux_${ARCH}.zip"
 
 DEBIAN_FRONTEND=noninteractive apt-get install -y unzip
 

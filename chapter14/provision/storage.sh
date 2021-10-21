@@ -10,11 +10,11 @@ ARCHIVE="minio.${MINIO_SERVER_VERSION}"
 CLIENT="mc.${MINIO_CLIENT_VERSION}"
 
 if ! check_cache_bin "${ARCHIVE}"; then
-  get_archive "https://dl.minio.io/server/minio/release/linux-amd64/archive/${ARCHIVE}"
+  get_archive "https://dl.minio.io/server/minio/release/linux-${ARCH}/archive/${ARCHIVE}"
 fi
 
 if ! check_cache_bin "${CLIENT}"; then
-  get_archive "https://dl.minio.io/client/mc/release/linux-amd64/archive/${CLIENT}"
+  get_archive "https://dl.minio.io/client/mc/release/linux-${ARCH}/archive/${CLIENT}"
 fi
 
 if ! id minio > /dev/null 2>&1 ; then

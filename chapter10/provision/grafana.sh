@@ -6,7 +6,7 @@ source /vagrant/utils/helpers.sh
 
 check_requirements curl rsync
 
-ARCHIVE="grafana_${GRAFANA_VERSION}_amd64.deb"
+ARCHIVE="grafana_${GRAFANA_VERSION}_${ARCH}.deb"
 
 if ! check_cache_deb "${ARCHIVE}"; then
   get_archive "https://dl.grafana.com/oss/release/${ARCHIVE}"

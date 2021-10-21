@@ -2,7 +2,7 @@ global:
     config_version: 2
 input:
     type: file
-    path: /var/log/syslog
+    path: /var/log/dpkg.log
     readall: false
 grok:
     patterns_dir: /etc/grok_exporter/patterns

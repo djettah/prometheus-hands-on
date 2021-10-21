@@ -6,7 +6,7 @@ source /vagrant/utils/helpers.sh
 
 check_requirements git
 
-ARCHIVE="go${GO_VERSION}.linux-amd64.tar.gz"
+ARCHIVE="go${GO_VERSION}.linux-${ARCH}.tar.gz"
 
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y graphviz

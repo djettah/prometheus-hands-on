@@ -6,7 +6,7 @@ source /vagrant/utils/helpers.sh
 
 check_requirements git
 
-ARCHIVE="go${GO_VERSION}.linux-amd64.tar.gz"
+ARCHIVE="go${GO_VERSION}.linux-${ARCH}.tar.gz"
 
 if ! check_cache_bin "custom-sd" ; then
   if ! check_cache "${ARCHIVE}" ; then

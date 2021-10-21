@@ -6,7 +6,7 @@ source /vagrant/utils/helpers.sh
 
 check_requirements curl tar
 
-ARCHIVE="thanos-${THANOS_VERSION}.linux-amd64.tar.gz"
+ARCHIVE="thanos-${THANOS_VERSION}.linux-${ARCH}.tar.gz"
 
 if ! check_cache "${ARCHIVE}"; then
   get_archive "https://github.com/improbable-eng/thanos/releases/download/v${THANOS_VERSION}/${ARCHIVE}"

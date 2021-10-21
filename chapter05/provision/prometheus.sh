@@ -6,7 +6,7 @@ source /vagrant/utils/helpers.sh
 
 check_requirements curl tar
 
-ARCHIVE="prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz"
+ARCHIVE="prometheus-${PROMETHEUS_VERSION}.linux-${ARCH}.tar.gz"
 
 if ! check_cache "${ARCHIVE}"; then
   get_archive "https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/${ARCHIVE}"

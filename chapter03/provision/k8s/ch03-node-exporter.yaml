@@ -1,0 +1,192 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    chapter: "03"
+    app.kubernetes.io/name: ch03-node-exporter
+  name: ch03-node-exporter
+  namespace: monitoring
+spec:
+  volumes:
+  - name: tmp-node-exporter
+    emptyDir:
+      sizeLimit: 20Mi
+  initContainers:
+  - name: config
+    image: busybox
+    command:
+    - "sh"
+    - "-c"
+    - | 
+        cat <<EOF > /tmp/node_exporter/node_exporter_custom_metric.prom 
+        #TYPE slurm_demo_metric counter
+        slurm_demo_metric 100
+        EOF
+    volumeMounts:
+    - mountPath: /tmp/node_exporter
+      name: tmp-node-exporter
+      readOnly: false
+  containers:
+  - args:
+    - --web.listen-address=0.0.0.0:9100
+    - --collector.textfile.directory=/tmp/node_exporter
+    image: docker.io/bitnami/node-exporter:1.2.2-debian-10-r18
+    imagePullPolicy: IfNotPresent
+    name: node-exporter
+    ports:
+    - containerPort: 9100
+      hostPort: 19100
+      name: metrics
+      protocol: TCP
+    resources: {}
+    volumeMounts:
+    - mountPath: /tmp/node_exporter
+      name: tmp-node-exporter
+      readOnly: false
+  restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    chapter: "03"
+  name: ch03-node-exporter
+  namespace: monitoring
+spec:
+  ports:
+  - name: metrics
+    port: 9100
+    protocol: TCP
+    targetPort: metrics
+  selector:
+    app.kubernetes.io/name: ch03-node-exporter
+    chapter: "03"
+  type: ClusterIP
+
+---
+
+# k patch cm my-blackbox-exporter-prometheus-blackbox-exporter --patch-file /Users/djet/dev/git/Hands-On-Infrastructure-Monitoring-with-Prometheus/chapter03/k8s/ch03-cm-my-blackbox-exporter-prometheus-blackbox-exporter-patch.yaml
+apiVersion: v1
+data:
+  blackbox.yaml: |
+    modules:
+      http_2xx:
+        http:
+          follow_redirects: true
+          preferred_ip_protocol: ip4
+          valid_http_versions:
+          - HTTP/1.1
+          - HTTP/2.0
+        prober: http
+        timeout: 5s
+      icmp_v4_slurm:
+        prober: icmp
+        icmp:
+          preferred_ip_protocol: ip4
+      icmp_v6_slurm:
+        prober: icmp
+        icmp:
+          preferred_ip_protocol: ip6
+      dns_slurm:
+        prober: dns
+        timeout: 2s
+        dns:
+          query_name: slurm.io
+          preferred_ip_protocol: ip4
+      tcp_slurm:
+        prober: tcp
+        timeout: 2s
+        tcp:
+          query_response: 
+            - expect: "^SSH-2.0-"
+          preferred_ip_protocol: ip4          
+      http_slurm:
+        prober: http
+        timeout: 2s
+        http:
+          preferred_ip_protocol: ip4
+          valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+          valid_status_codes: [200]
+          fail_if_not_ssl: true
+          method: GET
+          fail_if_body_not_matches_regexp:
+            - "Prometheus"
+kind: ConfigMap
+metadata:
+  name: my-blackbox-exporter-prometheus-blackbox-exporter
+  namespace: monitoring
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-blackbox-exporter-prometheus-blackbox-exporter
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: my-blackbox-exporter
+      app.kubernetes.io/name: prometheus-blackbox-exporter
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: my-blackbox-exporter
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: prometheus-blackbox-exporter
+        app.kubernetes.io/version: 0.19.0
+        helm.sh/chart: prometheus-blackbox-exporter-5.0.3
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - args:
+        - --config.file=/config/blackbox.yaml
+        image: prom/blackbox-exporter:v0.19.0
+        # imagePullPolicy: IfNotPresent
+        # livenessProbe:
+        #   failureThreshold: 3
+        #   httpGet:
+        #     path: /health
+        #     port: http
+        #     scheme: HTTP
+        #   periodSeconds: 10
+        #   successThreshold: 1
+        #   timeoutSeconds: 1
+        name: blackbox-exporter
+        ports:
+        - containerPort: 9115
+          name: http
+          protocol: TCP
+        # readinessProbe:
+        #   failureThreshold: 3
+        #   httpGet:
+        #     path: /health
+        #     port: http
+        #     scheme: HTTP
+        #   periodSeconds: 10
+        #   successThreshold: 1
+        #   timeoutSeconds: 1
+        resources: {}
+        securityContext:
+          # capabilities:
+          #   add:
+          #   - NET_ADMIN
+          #   - CAP_NET_RAW
+          readOnlyRootFilesystem: true
+          runAsNonRoot: false
+          # runAsUser: 1000
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /config
+          name: config
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      serviceAccount: my-blackbox-exporter-prometheus-blackbox-exporter
+      serviceAccountName: my-blackbox-exporter-prometheus-blackbox-exporter
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: my-blackbox-exporter-prometheus-blackbox-exporter
+        name: config

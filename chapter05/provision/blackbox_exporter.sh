@@ -6,7 +6,7 @@ source /vagrant/utils/helpers.sh
 
 check_requirements curl tar
 
-ARCHIVE="blackbox_exporter-${BLACKBOX_EXPORTER_VERSION}.linux-amd64.tar.gz"
+ARCHIVE="blackbox_exporter-${BLACKBOX_EXPORTER_VERSION}.linux-${ARCH}.tar.gz"
 
 if ! check_cache "${ARCHIVE}"; then
   get_archive "https://github.com/prometheus/blackbox_exporter/releases/download/v${BLACKBOX_EXPORTER_VERSION}/${ARCHIVE}"

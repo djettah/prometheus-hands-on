@@ -6,7 +6,7 @@ source /vagrant/utils/helpers.sh
 
 check_requirements curl tar
 
-ARCHIVE="alertmanager-${ALERTMANAGER_VERSION}.linux-amd64.tar.gz"
+ARCHIVE="alertmanager-${ALERTMANAGER_VERSION}.linux-${ARCH}.tar.gz"
 
 if ! check_cache "${ARCHIVE}"; then
   get_archive "https://github.com/prometheus/alertmanager/releases/download/v${ALERTMANAGER_VERSION}/${ARCHIVE}"

@@ -15,11 +15,11 @@ spec:
       labels:
         app: prometheus
       annotations:
-        version: "2"
+        version: "3"
     spec:
       containers:
       - name: prometheus-server
-        image: prom/prometheus:v2.9.2
+        image: prom/prometheus:v2.30.3
         imagePullPolicy: "IfNotPresent"
         args:
           - --config.file=/etc/config/prometheus.yml
