@@ -7,7 +7,7 @@ After=network.target
 
 [Service]
 User=consul_exporter
-ExecStart=/usr/bin/consul_exporter --consul.server=consul:8500
+ExecStart=/usr/bin/consul_exporter --consul.server=172.17.0.2:8500
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 

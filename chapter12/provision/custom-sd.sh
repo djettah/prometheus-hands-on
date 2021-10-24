@@ -18,7 +18,7 @@ if ! check_cache_bin "custom-sd" ; then
   ln -s /usr/lib/go/bin/go /usr/bin/ || true
 
   echo "Building custom-sd, this might take a while..."
-  go get github.com/prometheus/prometheus/documentation/examples/custom-sd/adapter-usage
+  go get github.com/prometheus/prometheus/documentation/examples/custom-sd/adapter-usage@master
   install -m 0755 /root/go/bin/adapter-usage /vagrant/cache/custom-sd
 fi
 

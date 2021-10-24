@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
     override.vm.box = nil
 
     # this is where your Dockerfile lives
-    docker.build_dir = "../utils"
+    docker.build_dir = "../provision/vagrant/arm64"
 
     # Make sure it sets up ssh with the Dockerfile
     # Vagrant is pretty dependent on ssh

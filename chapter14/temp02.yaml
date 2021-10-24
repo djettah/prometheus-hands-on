@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{},"name":"matomo-ingress","namespace":"matomo"},"spec":{"rules":[{"host":"matomo.oss.local","http":{"paths":[{"backend":{"service":{"name":"matomo","port":{"number":80}}},"path":"/","pathType":"Prefix"}]}}]}}
+  creationTimestamp: "2021-09-11T07:35:45Z"
+  generation: 1
+  name: matomo-ingress
+  namespace: matomo
+  resourceVersion: "81844860"
+  uid: 95e57703-6cef-46cf-99ad-3b1a9c217641
+spec:
+  rules:
+  - host: matomo.oss.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: matomo
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer: {}

@@ -6,15 +6,42 @@ require '../utils/vagrant_defaults'
 instances = ['prometheus', 'storage', 'thanos']
 
 Vagrant.configure(2) do |config|
+  # Custom configuration for docker
+  config.vm.provider "docker" do |docker, override|
+    # docker doesnt use boxes
+    override.vm.box = nil
+
+    # this is where your Dockerfile lives
+    docker.build_dir = "../provision/vagrant/arm64"
+
+    # Make sure it sets up ssh with the Dockerfile
+    # Vagrant is pretty dependent on ssh
+    override.ssh.insert_key = true
+    docker.has_ssh = true
+
+    # Configure Docker to allow access to more resources
+    docker.privileged = true
+  end
+   
   config.vm.synced_folder "..", "/vagrant"
   instances.each_with_index.map do |item, index|
     config.vm.define "#{item}" do |node|
-      node.vm.box = BOX
-      node.vm.provider "virtualbox" do |vbox|
-        vbox.gui    = GUI
-        vbox.memory = RAM + 256
-        vbox.name = item
+      # node.vm.box = BOX
+      # node.vm.provider "virtualbox" do |vbox|
+      #   vbox.gui    = GUI
+      #   vbox.memory = RAM + 256
+      #   vbox.name = item
+      # end
+
+      case item
+        when 'prometheus'
+          node.vm.network "forwarded_port", guest: 9090, host: 9090, host_ip: "127.0.0.1"
+        when 'storage'
+          node.vm.network "forwarded_port", guest: 9000, host: 9000, host_ip: "127.0.0.1"
+        when 'thanos'
+          node.vm.network "forwarded_port", guest: 10902, host: 10902, host_ip: "127.0.0.1"
       end
+
       node.vm.hostname = item + DOMAIN
       node.vm.network 'private_network', ip: NETWORK + "#{index + 10}", netmask: NETMASK
       node.vm.provision "shell", path: "provision/hosts.sh", args: [NETWORK, DOMAIN, 10]

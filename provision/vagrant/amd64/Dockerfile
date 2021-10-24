@@ -1,14 +1,12 @@
 # Adapted from https://github.com/BashtonLtd/docker-vagrant-images/blob/master/ubuntu1404/Dockerfile
 
-FROM ubuntu:18.04
+FROM --platform=linux/amd64 ubuntu:18.04  
 ENV container docker
 RUN apt-get update -y && apt-get dist-upgrade -y
 
 # Install system dependencies, you may not need all of these
 RUN apt-get install -y --no-install-recommends ssh sudo libffi-dev systemd openssh-client ca-certificates curl
-RUN apt-get install -y --no-install-recommends rsync iproute2 iputils-ping tmux vim less cron
-RUN apt-get install -y --no-install-recommends libcap2-bin
-RUN apt-get install -y --no-install-recommends git
+RUN apt-get install -y --no-install-recommends rsync iproute2 iputils-ping tmux vim less cron libcap2-bin git zsh python3
 
 # Needed to run systemd
 # VOLUME [ "/sys/fs/cgroup" ]
@@ -17,7 +15,7 @@ RUN apt-get install -y --no-install-recommends git
 # RUN apt-get -y install puppet
 
 # Add vagrant user and key for SSH
-RUN useradd --create-home -s /bin/bash vagrant
+RUN useradd --create-home -s /usr/bin/zsh vagrant
 RUN echo -n 'vagrant:vagrant' | chpasswd
 RUN echo 'vagrant ALL = NOPASSWD: ALL' > /etc/sudoers.d/vagrant
 RUN chmod 440 /etc/sudoers.d/vagrant
@@ -30,6 +28,7 @@ RUN chmod 600 /home/vagrant/.ssh/authorized_keys
 RUN chown -R vagrant:vagrant /home/vagrant/.ssh
 RUN sed -i -e 's/Defaults.*requiretty/#&/' /etc/sudoers
 RUN sed -i -e 's/\(UsePAM \)yes/\1 no/' /etc/ssh/sshd_config
+RUN chsh -s /usr/bin/zsh
 
 # Fix 100% agetty CPU usage
 RUN rm -f /lib/systemd/system/systemd*udev* \

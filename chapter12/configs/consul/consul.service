@@ -9,9 +9,9 @@ After=network.target
 User=consul
 ExecStart=/usr/bin/consul agent \
             -dev \
-            -bind=192.168.42.11 \
-            -client=192.168.42.11 \
-            -advertise=192.168.42.11
+            -bind=172.17.0.2 \
+            -client=172.17.0.2 \
+            -advertise=172.17.0.2
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.pathmatcher: Path
+    traefik.ingress.kubernetes.io/router.tls: "false"
+  name: temp04
+  namespace: zabbix-trunk
+spec:
+  rules:
+  - host: temp04.oss.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: zabbix-web
+            port:
+              name: web-http
+        path: /
+        pathType: Prefix
